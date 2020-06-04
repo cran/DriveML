@@ -1,0 +1,412 @@
+---
+title: "DriveML: Machine Learning Projects"
+subtitle: "Classification ML Model Report"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    theme: cerulean
+    toc: yes
+    toc_depth: 6
+params:
+  mlobject: mlobject
+  mldata: mldata
+---
+  
+```{r setup, include=FALSE}
+library(rmarkdown)
+library(DriveML)
+library(knitr)
+library(scales)
+library(ggplot2)
+
+modelobject <- params$mlobject
+mldata <- params$mldata
+
+```
+  
+## ML Model Data Preparation
+
+```{r mldd, warning=FALSE, eval=T, include=F}
+## MAR section
+
+```
+
+
+### Summary of input dataframe
+
+**Overview of the data**
+
+```{r mdp1,warning=FALSE,eval=T,render=t1,echo=F}
+typ1 <- mldata$datasummary$type1
+kable(typ1)
+```
+
+**Variable summary**
+
+```{r mdp2,warning=FALSE,eval=T,render=t1,echo=F}
+typ2 <- mldata$datasummary$type2
+paged_table(typ2)
+```
+
+### Missing not completely at random variable check (MAR)
+More than one missing value columns are considered for MAR computation
+
+```{r mdp3, warning = FALSE, eval = T, echo = F}
+print(mldata$var_list$MAR_col)
+```
+
+
+### Missing imputation
+
+```{r mdp4, warning = FALSE, eval = T, echo = F}
+if(mldata$call$missimpute=="default") {
+  mdd <- data.frame(Variable_type = c("Factor", "Integer", "Numeric", "Character"),
+  Impute_method = c("Mode value", "Mean value", "Median value", "Constant value"))
+  kable(mdd)
+    } else {
+    cat("Missing replaced with", "{", print(mldata$call$missimpute), "\n") }
+
+```
+
+### Feature engineering
+
+```{r mdp5, warning = FALSE, eval = T, echo = F}
+ccd = data.frame(Descriptions = c("Checked and removed useless variables:",
+"No. of variables before fetature reductions:"), Value = c(length(mldata$var_list$Dropped_col), length(mldata$overall_variable)))
+kable(ccd)
+```
+
+#### Variable computaion
+
+##### Outlier variable
+
+```{r mdp6, warning = FALSE, eval = T, echo = F}
+print(mldata$outlier_summary)
+```
+
+##### Interaction variables using multiplaction method
+
+Calculated ineraction between two continuous variables using multiplication method 
+
+List of variables calculated are below
+
+```{r mdp7, warning = FALSE, eval = T, echo = F}
+cc  <- mldata$overall_variable
+print(cc[grep("Inter_", cc)])
+```
+
+
+##### Frequent transformer variables
+
+The frequent transformer counts each categorical variable in the data set
+
+List of variables calculated are below
+
+```{r mdp8, warning = FALSE, eval = T, echo = F}
+cc  <- mldata$overall_variable
+print(cc[grep("Freq_t", cc)])
+```
+
+##### Date transformer variables
+
+Date transformer retrieves any date values like month, year, quarter and week
+
+List of variables calculated are below
+
+```{r mdp9, warning = FALSE, eval = T, echo = F}
+cc  <- mldata$overall_variable
+print(cc[grep("datet_", cc)])
+```
+
+##### Dummy variables using one hot encoding
+
+One hot coding for all categorical variables
+
+```{r mdp10, warning = FALSE, eval = T, echo = F}
+cc  <- mldata$var_list$Dummy_col
+print(cc)
+
+```
+
+#### Variable reduction
+
+##### Zero variance
+
+```{r mdp11, warning = FALSE, eval = T, echo = F}
+cc  <- mldata$zerovariance
+print(cc)
+```
+
+
+##### Correlation
+
+Highly correlated variables
+
+```{r mdp12, warning = FALSE, eval = T, echo = F}
+cc  <- mldata$cor_var
+print(cc)
+```
+
+**Correaltion table**
+
+```{r mdp121,warning=FALSE,eval=T, echo=F}
+cc  <- mldata$raw_list$Num_Correlation
+paged_table(cc)
+```
+
+##### Area Under the curve
+
+Top predictors based on AUC value against dependent variables
+
+```{r mdp13, warning = FALSE, eval = T, echo = F}
+cc  <- mldata$auc_var
+print(cc)
+```
+
+**AUC summary table**
+
+```{r mdp131,warning=FALSE,eval=T, echo=F}
+cc  <- mldata$raw_list$AUC_value
+
+if(nrow(cc) > 0){
+  rownames(cc) <- NULL
+  cc <- cc[, c(2:3)]
+}
+
+paged_table(cc)
+```
+
+### Final table view - head
+
+```{r mdp131,warning=FALSE,eval=T, echo=F}
+cc  <- mldata$master_data
+paged_table(head(cc, 5))
+```
+
+## Machine Learning Classification Model
+
+Automated Machine Learning (DriveML) mainly refers to the automated methods for model selection and hyper-parameter optimization of various algorithms such as random forests, gradient boosting etc..
+
+### Summary of trained data and model function
+
+Dimensions of the dataset and other informations
+
+```{r dl_1,warning=FALSE,eval=T,include=F}
+t1 <- modelobject$datasummary$train;
+t2 <- modelobject$datasummary$test;
+t3 <- modelobject$datasummary$score; 
+
+t4 <- modelobject$call
+mdata <- NULL
+for(j in 2: length(t4)){
+  fnam <- as.character(names(t4[j]))
+  ivalue <- as.character(t4[[j]])
+  if(length(ivalue) == 0) ivalue <- "NULL"
+  md <- data.frame(parameter = fnam, input = ivalue)
+  mdata <- rbind(mdata, md)
+  }
+
+ modename <- names(modelobject$trainedModels)
+    manme <- data.frame(model = c("glmnet", "logreg", "randomForest", "ranger", "xgboost", "rpart"),descriptions = c("Regularised regression  from glmnet R package",
+                                        "logistic regression from stats R package",
+                                        "Random forests using the randomForest R package",
+                                        "Random forests using the ranger R package",
+                                        "Gradient boosting using xgboost R package",
+                                        "decision tree classification using rpart R package"))
+ drmodel <- subset(manme, model = modename)
+
+## section2
+result <- modelobject$results
+rownames(result) <- NULL
+
+## Section ROC plot
+exe_modl <- names(modelobject$trainedModels)
+pl_glmnet <- pl_logreg <- pl_randomForest <- pl_ranger <- pl_xgboost <- pl_rpart <- FALSE
+
+for(j in exe_modl){
+  assign(paste0("pl_",j), TRUE)
+}
+
+## variable importance
+vi_randomForest <- vi_ranger <- vi_xgboost <- vi_rpart <- vi_logreg <- vi_glmnet <- FALSE
+for(j in exe_modl){
+  if(j == "randomForest") assign(paste0("vi_",j), TRUE)
+  if(j == "ranger") assign(paste0("vi_",j), TRUE)
+  if(j == "xgboost") assign(paste0("vi_",j), TRUE)
+  if(j == "glmnet") assign(paste0("vi_",j), TRUE)
+  if(j == "logreg") assign(paste0("vi_",j), TRUE)
+  if(j == "rpart") assign(paste0("vi_",j), TRUE)
+}
+
+
+```
+
+**Training data set**
+
+```{r dl_11,warning=FALSE,eval=T,render=t1,echo=F}
+t1 <- t1[t1$Obs!=0,]; rownames(t1) <- NULL
+kable(t1)
+```
+
+**Validation data set**
+
+```{r dl_12,warning=FALSE,eval=T,render=t2,echo=F}
+t2 <- t2[t2$Obs!=0,]; rownames(t2) <- NULL
+kable(t2)
+```
+
+**Scoring data set**
+
+```{r dl_13,warning=FALSE,eval=T,render=t3,echo=F}
+if(!is.null(t3)) {
+  t3 <- t3[t3$Obs!=0,]; rownames(t3) <- NULL
+  kable(t3)
+} else {
+    cat("No score data set")
+  }
+
+```
+
+### DriveML Model selected parameters
+
+```{r dl_14,warning=FALSE,eval=T,render=mdata,echo=F}
+  kable(mdata)
+```
+
+### List of Machine learning classification algorithm used
+
+```{r dl_15,warning=FALSE,eval=T,render=drmodel,echo=F}
+  kable(drmodel)
+```
+
+## Model Performance comparision
+
+### Summary table
+
+Table has Model fitting time and performance metric like AUC, Accuaracy, Precision, Recall and F1 score
+
+```{r d2, warning = FALSE, eval = T, render = result, echo=F}
+  kable(result)
+```
+
+### ROC curve
+
+```{r std1, fig.show = "hold", out.width = "50%", fig.align = "default", warning=FALSE, eval= pl_glmnet, render = modelobject, echo=F}
+
+masterModel <- modelobject$trainedModels[["glmnet"]]
+masterModel$modelPlots$TrainROC
+masterModel$modelPlots$TestROC
+```
+
+```{r std2, fig.show = "hold", out.width = "50%", fig.align = "default", warning=FALSE, eval= pl_logreg, render = modelobject, echo=F}
+
+masterModel <- modelobject$trainedModels[["logreg"]]
+masterModel$modelPlots$TrainROC
+masterModel$modelPlots$TestROC
+```
+
+```{r std3, fig.show = "hold", out.width = "50%", fig.align = "default", warning=FALSE, eval= pl_randomForest, render = modelobject, echo=F}
+
+masterModel <- modelobject$trainedModels[["randomForest"]]
+masterModel$modelPlots$TrainROC
+masterModel$modelPlots$TestROC
+```
+
+
+```{r std4, fig.show = "hold", out.width = "50%", fig.align = "default", warning=FALSE, eval= pl_ranger, render = modelobject, echo=F}
+
+masterModel <- modelobject$trainedModels[["ranger"]]
+masterModel$modelPlots$TrainROC
+masterModel$modelPlots$TestROC
+```
+
+```{r std5, fig.show = "hold", out.width = "50%", fig.align = "default", warning=FALSE, eval= pl_xgboost, render = modelobject, echo=F}
+
+masterModel <- modelobject$trainedModels[["xgboost"]]
+masterModel$modelPlots$TrainROC
+masterModel$modelPlots$TestROC
+```
+
+```{r std6, fig.show = "hold", out.width = "50%", fig.align = "default", warning=FALSE, eval= pl_rpart, render = modelobject, echo=F}
+
+masterModel <- modelobject$trainedModels[["rpart"]]
+masterModel$modelPlots$TrainROC
+masterModel$modelPlots$TestROC
+```
+
+### Variable importance
+
+
+```{r vip1, fig.show = "hold", out.width = "70%", fig.align = "default", warning=FALSE, eval= vi_xgboost, render = modelobject, echo=F, fig.height=7}
+masterModel <- modelobject$trainedModels[["xgboost"]]
+masterModel$modelPlots$VarImp[[1]]
+```
+
+```{r vip2, fig.show = "hold", out.width = "70%", fig.align = "default", warning=FALSE, eval= vi_randomForest, render = modelobject, echo=F, fig.height=7}
+masterModel <- modelobject$trainedModels[["randomForest"]]
+masterModel$modelPlots$VarImp[[1]]
+```
+
+```{r vip3, fig.show = "hold", out.width = "70%", fig.align = "default", warning=FALSE, eval= vi_ranger, render = modelobject, echo=F, fig.height=7}
+masterModel <- modelobject$trainedModels[["ranger"]]
+masterModel$modelPlots$VarImp[[1]]
+```
+
+```{r vip4, fig.show = "hold", out.width = "70%", fig.align = "default", warning=FALSE, eval= vi_rpart, render = modelobject, echo=F, fig.height=7}
+masterModel <- modelobject$trainedModels[["rpart"]]
+masterModel$modelPlots$VarImp[[1]]
+```
+
+```{r vip5, fig.show = "hold", out.width = "70%", fig.align = "default", warning=FALSE, eval= vi_glmnet, render = modelobject, echo=F, fig.height=7}
+masterModel <- modelobject$trainedModels[["glmnet"]]
+masterModel$modelPlots$VarImp[[1]]
+```
+
+```{r vip6, fig.show = "hold", out.width = "70%", fig.align = "default", warning=FALSE, eval= vi_logreg, render = modelobject, echo=F, fig.height=7}
+masterModel <- modelobject$trainedModels[["logreg"]]
+masterModel$modelPlots$VarImp[[1]]
+```
+
+## Best Model Explainability
+
+Used lift charts and PDP plots
+
+### Lift charts and table
+
+##### Lift chart
+
+```{r lift1, fig.show = "hold", out.width = "100%", fig.align = "default", warning=FALSE, eval= T, render = modelobject, echo=F, fig.height = 4}
+modelobject$modelexp$Lift_plot
+```
+
+##### Lift table
+
+Top decile (2%) lift catpured by model level
+
+```{r lift2, warning=FALSE,eval=T, render=modelobject, echo=F}
+cc <- modelobject$modelexp$Lift_data
+cc1 <- cc[cc$groups==1, ]; rownames(cc1) <- NULL
+cc2 <- cc[cc$groups==5, ]; rownames(cc2) <- NULL
+ccd <-  data.frame(model = cc1$model, top_2 = cc1$lift, top_10 = cc2$lift)
+kable(ccd)
+```
+
+
+### Partial Dependency Plots (PDP)
+Note: Plot available for top important variables
+
+```{r pdppp, fig.show = "hold", out.width = "50%", fig.align = "default", warning=FALSE, eval= T, render = modelobject, echo=F, fig.height=4, results='hide'}
+lapply(names(modelobject$modelexp$pdp$plots), function(x) {cc = modelobject$modelexp$pdp$plots[[x]]; cc})
+
+```
+
+
+### Sample view of predicted score - validation set
+
+```{r dat, warning=FALSE,eval=T, render=modelobject, echo=F}
+cc <- modelobject$predicted_score$test
+cc <-  data.frame(cc[1:10, ])
+kable(cc)
+```
+
+

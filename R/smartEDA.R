@@ -1,0 +1,78 @@
+#' @title SmartEDA - functions that automates most of exploratory analyses tasks in modeling
+#'
+#' @description SmartEDA includes multiple custom functions to perform initial exploratory analysis on any input data describing the structure and the relationships present in the data. The generated output can be obtained in both summary and graphical form. The graphical form or charts can also be exported as reports.
+#'
+#' @param data a data frame
+#' @param Template R markdown template (.rmd file)
+#' @param Target dependent variable. If there is no defined target variable then keep as it is NULL.
+#' @param label target variable descriptions, not a mandatory field
+#' @param theme customized ggplot theme (default SmartEDA theme) (for Some extra themes use Package: ggthemes)
+#' @param op_file output file name (.html)
+#' @param op_dir output path
+#' @param sc sample number of plots for categorical variable. User can decide how many number of plots to depict in html report.
+#' @param sn sample number of plots for numerical variable. User can decide how many number of plots to depict in html report.
+#' @param Rc reference category of target variable. If Target is categorical then Pclass value is mandatory and which should not be NULL
+#' @details SmartEDA has four major functionalities
+#' 1. Descriptive statistics
+#' \itemize{
+#'   \item Numerical variable summary :
+#'   \item{\code{ExpNumStat}}{ - Summary statistics for numerical variables}
+#'   \code{\link[SmartEDA:ExpNumStat]{ExpNumStat}}
+#'   \item Categorical variable summary :
+#'   \item{\code{ExpCatStat}}{ - Function provides summary statistics for all character or categorical columns in the dataframe}
+#'   \code{\link[SmartEDA:ExpCatStat]{ExpCatStat}}
+#'   \item{\code{ExpCTable}}{ - Function to create frequency and custom tables}
+#'   \code{\link[SmartEDA:ExpCTable]{ExpCTable}}
+#' }
+#'
+#' 2. Data visualization
+#' \itemize{
+#'   \item Numerical variable plot :
+#'   \item{\code{ExpNumViz}} { - Distributions of numeric variables}
+#'   \code{\link[SmartEDA:ExpNumViz]{ExpNumViz}}
+#'   \item Categorical variable plot :
+#'   \item{\code{ExpCatViz}}{ - Distributions of categorical variables}
+#'   \code{\link[SmartEDA:ExpCatViz]{ExpCatViz}}
+#'   \item Normality testing plot:
+#'   \item{\code{ExpOutQQ}}{ - Quantile Quantile Plots}
+#'   \code{\link[SmartEDA:ExpOutQQ]{ExpOutQQ}}
+#'   \item{\code{ExpParcoord}}{ - Parallel Co ordinate plots}
+#'   \code{\link[SmartEDA:ExpParcoord]{ExpParcoord}}
+#' }
+#'
+#' 3. Custom tables
+#' \itemize{
+#'   \item Customized summary statistics :
+#'   \item{\code{ExpCustomStat}}{ - Customized summary statistics}
+#'   \code{\link[SmartEDA:ExpCustomStat]{ExpCustomStat}}
+#' }
+#'
+#' 4. EDA report
+#' \itemize{
+#'   \item Function to create HTML EDA report :
+#'   \item{\code{ExpReport}}{ - Function to create HTML EDA report}
+#'   \code{\link[SmartEDA:ExpReport]{ExpReport}}
+#'   }
+#' @source
+#'
+#' Useful links:
+#' \itemize{
+#' \item CRAN page \url{ https://CRAN.R-project.org/package=SmartEDA}
+#' \item JOSS \url{https://doi.org/10.21105/joss.01509}
+#' }
+#' @return HTML Rmarkdown output file in .html format
+#' @examples
+#' \donttest{
+#' # Genearate complete EDA report
+#' smartEDA(iris, op_file="eda_report.html", op_dir = tempdir(), sc = NULL, sn = 2)
+#'}
+#' @importFrom SmartEDA ExpReport
+#' @export smartEDA
+
+smartEDA <- function (data, Template = NULL, Target = NULL, label = NULL, theme = "Default",
+                       op_file = NULL, op_dir = getwd(), sc = NULL, sn = NULL, Rc = NULL){
+
+  return(ExpReport(data, Template, Target, label, theme,
+                   op_file, op_dir, sc, sn, Rc))
+
+}
