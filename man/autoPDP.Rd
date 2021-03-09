@@ -4,29 +4,36 @@
 \alias{autoPDP}
 \title{Generate partial dependence plots}
 \usage{
-autoPDP(train, trainedModel, target, feature, sample = 0.5, modelname,
-  seed = 1991)
+autoPDP(
+  train,
+  trainedModel,
+  target,
+  feature,
+  sample = 0.5,
+  modelname,
+  seed = 1991
+)
 }
 \arguments{
-\item{train}{[data.frame | Required] Training sample used to train ML model}
+\item{train}{[data.frame | Required] training sample used to train ML model}
 
-\item{trainedModel}{[model object | Required] The object holding the machine learning model and the data}
+\item{trainedModel}{[model object | Required] the object holding the machine learning model and the data}
 
-\item{target}{[character | Optional] Target variable name. Specify target variable if model object is other than MLR or driveML}
+\item{target}{[character | Optional] target variable name. Specify target variable if model object is other than MLR or driveML}
 
-\item{feature}{[character | Optional] The feature name for which to compute the effects}
+\item{feature}{[character | Optional] the feature name for which to compute the effects}
 
-\item{sample}{[numeric | Optional] Percentage of sample to be considered for training set for faster computation. Default of 0.5}
+\item{sample}{[numeric | Optional] percentage of sample to be considered for training set for faster computation. Default of 0.5}
 
 \item{modelname}{[character | Optional] specify whcih model to be plotted}
 
-\item{seed}{[integer | Optional] Random seed number. Default 121}
+\item{seed}{[integer | Optional] random seed number. Default is 121}
 }
 \value{
 List object containing a plot for each feature listed.
 }
 \description{
-Partial dependence plots (PDPs) help you to visualize the relationship between a subset of the features and the response while accounting for the average effect of the other predictors in the model. They are particularly effective with black box models like random forests and support vector machines.
+Partial dependence plots (PDPs) help you to visualize the relationship between a subset of the features and the response while accounting for the average effect of the other predictors in the model. They are particularly effective with black box models like random forests, gradient boosting, etc.
 }
 \examples{
 
@@ -35,20 +42,13 @@ Partial dependence plots (PDPs) help you to visualize the relationship between a
 mymodel = heart.model
 pdp_chol = autoPDP(heart, mymodel, feature = "chol", sample = 0.8, seed = 1234)
 
-# Type one MLR package
-mod <- mlr::train(makeLearner("classif.ranger"), iris.task)
-cc = autoPDP(iris, mod, feature = c("Sepal.Length","Sepal.Width","Petal.Length",
-                                   "Petal.Width"), sample = 1, seed = 121)
-# Type 2 DrvieML object
+# Type 1 DrvieML object
 hearML <- autoMLmodel(heart,  target = "target_var",  testSplit = 0.2,
 tuneIters = 10,  tuneType = "random",
 models = "all", varImp = 20,  liftGroup = 50, positive = 1, seed = 1991)
 cc = autoPDP(heart, hearML, feature = "chol", sample = 0.8, seed = 1234)
 
-cc1 = autoPDP(heart, trainedModel,target = "target_var", feature = "chol",
-sample = 1, modelname = "logreg", seed = 121)
-
-# Type 3 other ML object
+# Type 2 other ML object
 library(randomForest)
 library(MASS)
 rf = randomForest(medv ~ ., data = Boston, ntree = 50)

@@ -13,7 +13,7 @@ autoMLReport(mlobject, mldata = NULL, op_file = NULL, op_dir = NULL)
 
 \item{op_file}{[character | Required] output file name (.html)}
 
-\item{op_dir}{[character | Optional] output path. Default path is current working directory}
+\item{op_dir}{[character | Optional] output path. Default path is the current working directory}
 }
 \value{
 HTML R Markdown output
@@ -22,7 +22,7 @@ HTML R Markdown output
 This function will generate R markdown report for DriveML model object
 }
 \details{
-Using this function easily present the model outcome in standard HTML format without writing Rmarkdown scripts
+Using this function we can easily present the model outcome in standard HTML format without writing Rmarkdown scripts
 }
 \examples{
 ## Creating HTML report

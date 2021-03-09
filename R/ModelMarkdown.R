@@ -5,9 +5,9 @@
 #' @param mlobject [autoMLmodel Object | Required] autoMLmodel function output
 #' @param mldata [autoDataprep Object | Optional] autoDataprep function output
 #' @param op_file [character | Required] output file name (.html)
-#' @param op_dir [character | Optional] output path. Default path is current working directory
+#' @param op_dir [character | Optional] output path. Default path is the current working directory
 #' @details
-#' Using this function easily present the model outcome in standard HTML format without writing Rmarkdown scripts
+#' Using this function we can easily present the model outcome in standard HTML format without writing Rmarkdown scripts
 #'
 #' @return HTML R Markdown output
 #'

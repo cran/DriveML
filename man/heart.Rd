@@ -4,7 +4,8 @@
 \name{heart}
 \alias{heart}
 \title{Dataset Heart Disease - Classifications}
-\format{A data frame with 303 rows and 14 variables:
+\format{
+A data frame with 303 rows and 14 variables:
 \describe{
   \item{\code{age}}{integer Age}
   \item{\code{sex}}{integer Sex}
@@ -20,9 +21,7 @@
   \item{\code{ca}}{integer number of major vessels (0-3) colored by flourosopy}
   \item{\code{thal}}{integer thal: 3 = normal; 6 = fixed defect; 7 = reversable defect}
   \item{\code{target_var}}{integer the presence of heart disease in the patient. It is integer valued from 0 (no presence) to 4}
-}}
-\source{
-\url{https://www.kaggle.com/cdabakoglu/heart-disease-classifications-machine-learning}
+}
 }
 \usage{
 heart

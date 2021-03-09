@@ -27,52 +27,46 @@ library(tidyr)
 
 ## 1. Introduction
 
-The document introduces the **DriveML** package and how it can help you to build effortless machine learning binary classification models in short period
+The document introduces the **DriveML** package and how it can help you to build effortless machine learning binary classification models in a short period.
 
-  **DriveML** is a series of functions sucha as `AutoDataPrep`, `AutoMAR`, `autoMLmodel`.  **DriveML** automates some of the most difficult machine learning functions such as data exploratory analysis, data pre-processing, feature engineering, model training, model validation, model tuning and model selection. 
+**DriveML** is a series of functions such as `AutoDataPrep`, `AutoMAR`, `autoMLmodel`.  **DriveML** automates some of the complicated machine learning functions such as exploratory data analysis, data pre-processing, feature engineering, model training, model validation, model tuning and model selection. 
   
-  This package automates following steps on any input dataset for machine learning classification problems
+This package automates the following steps on any input dataset for machine learning classification problems
 
-1. Exploratory data analysis using SmartEDA functions
-    + Generate automated EDA report in HTML format to understand the distributions of the data
-
-2. Data cleaning
+1. Data cleaning
     + Replacing NA, infinite values
     + Removing duplicates
     + Cleaning feature names
 
-3. Feature engineering
+2. Feature engineering
     + Missing at random features
     + Missing variable imputation
-    + Outlier treatment  - Oultier flag and imputation with 5th or 95th percentile value
+    + Outlier treatment  - Outlier flag and imputation with 5th or 95th percentile value
     + Date variable transformation
     + Bulk interactions for numerical features
-    + Frequent tranformer for categorical features
+    + Frequent transformer for categorical features
     + Categorical feature engineering - one hot encoding
     + Feature selection using zero variance, correlation and AUC method
     
-4. Model training and validation
+3. Binary classification - Model training and validation
     + Automated test and validation set creations
-    + Hyperparameter tuing using random search
-    + Mutliple binary classification included like logistic regression, randomForest, xgboost, glmnet, rpart
+    + Hyperparameter tuning using random search
+    + Multiple binary classification algorithms like logistic regression, randomForest, xgboost, glmnet, rpart
     + Model validation using AUC value
     + Model plots like training and testing ROC curve, threshold plot
-    + Probaility scores and model objects 
+    + Probability scores and model objects 
 
-5. Ensemble modelling
-    + Model ensembling using nnls and nnet method
-
-6. Model Explanation
+4. Model Explanation
     + Lift plot
     + Partial dependence plot
     + Feature importance plot
 
-7. Model report 
+5. Model report 
     + model output in rmarkdown html format
 
-To summarize, DriveML package helps in getting the complete Machine learning classification model just by running the function instead of writing lengthy r code.
+Additionally, we are providing a function SmartEDA for Exploratory data analysis that generates automated EDA report in HTML format to understand the distributions of the data. Please note there are some dependencies on some other R packages such as MLR, caret, data.table, ggplot2, etc. for some specific task.
 
-This package performs ML models in R using MLR package
+To summarize, DriveML package helps in getting the complete Machine learning classification model just by running the function instead of writing lengthy r code.
 
 #### Missing not at random features
 
@@ -89,36 +83,32 @@ Algorithm: Missing at random features
 
 ## 2. Functionalities of DriveML
 
-The DriveML R package has four unique functionalities as
+The DriveML R package has three unique functions
 
-1. Data Exploration
-    + `SmartEDA` has a complete exploratory data analysis function
-
-2. Data preparations
+1. Data Pre-processing and Data Preparation
     + `autoDataPrep` function to generate a novel features based on the functional understanding of the dataset
     
-3. Machine learning models
-    + `autoMLmodel` function to develope baseline machine learning models using regression and tree based classfication techniques
+2. Building Machine Learning Models
+    + `autoMLmodel` function to develop baseline machine learning models using regression and tree based classification techniques
 
-4. Model report
+3. Generating Model Report
     + `autoMLReport` function to print the machine learning model outcome in HTML format
 
-## 3. DriveML: Machine learning classfication model
+## 3. Machine learning classfication model use-case using DriveML 
 
-#### About data
+#### About the dataset
 
 This database contains 76 attributes, but all published experiments refer to using a subset of 14 of them. In particular, the Cleveland database is the only one that has been used by ML researchers to this date. The "goal" field refers to the presence of heart disease in the patient. It is integer valued from 0 (no presence) to 4.
 
-Data Source [Kaggle](https://archive.ics.uci.edu/ml/datasets/Heart+Disease).
+Data Source `https://archive.ics.uci.edu/ml/datasets/Heart+Disease`
 
 Install the package "DriveML" to get the example data set.
 
 ```{r eda-c3-r, warning=FALSE,eval=F}
-install.packages("DriveML")
 library("DriveML")
 library("SmartEDA")
 ## Load sample dataset from ISLR pacakge
-heart = DriveML::heart
+data(heart)
 ```
 
 more detailed attribute information is there in `DriveML` help page
@@ -171,9 +161,9 @@ paged_table(snc)
 
 #### Distributions of Numerical variables
 
-* Box plots for all numerical variables vs categorical dependent variable - Bivariate comparision only with categories
+Box plots for all numerical variables vs categorical dependent variable - Bivariate comparison only with classes
 
-Boxplot for all the numeric attributes by each category of **target_var**
+Boxplot for all the numerical attributes by each class of the **target variable**
 
 ```{r bp3.1,warning=FALSE,eval=T,include=T,fig.align='center',fig.height=7,fig.width=7}
 plot4 <- ExpNumViz(heart,target="target_var",type=1,nlim=3,fname=NULL,Page=c(2,2),sample=8)
@@ -189,8 +179,7 @@ rownames(et100)<-NULL
 
 **Cross tabulation with target_var variable**
 
-  * Custom tables between all categorical independent variables and target_var variable **target_var** 
-
+Custom tables between all categorical independent variables and the target variable
 
 ```{r ed3.4, warning=FALSE,eval=F,include=T}
 ExpCTable(Carseats,Target="Urban",margin=1,clim=10,nlim=3,round=2,bin=NULL,per=F)
@@ -199,7 +188,6 @@ ExpCTable(Carseats,Target="Urban",margin=1,clim=10,nlim=3,round=2,bin=NULL,per=F
 ```{r ed3.5,warning=FALSE,eval=T,render=et100,echo=F,out.height=8,out.width=8}
 kable(et100,"html")
 ```
-
 
 #### Distributions of categorical variables
 
@@ -225,14 +213,13 @@ ExpOutliers(heart, varlist = c("oldpeak","trestbps","chol"), method = "boxplot",
 kable(outlier_summ,"html")
 ```
 
-
 ### 3.2 Data preparations using `autoDataprep`
 
 ```{r , warning=FALSE,eval=T,include=T}
-dateprep <- autoDataprep(data = heart,
-                             target = 'target_var',
-                             missimpute = 'default',
-                             auto_mar = FALSE,
+dateprep <- autoDataprep(data = heart, 
+                         target = 'target_var',
+                         missimpute = 'default',
+                         auto_mar = FALSE,
                              mar_object = NULL,
                              dummyvar = TRUE,
                              char_var_limit = 15,
@@ -242,14 +229,14 @@ dateprep <- autoDataprep(data = heart,
                              uid = NULL,
                              onlykeep = NULL,
                              drop = NULL)
-printautoDataprep(dateprep)
+
+print(dateprep)
 train_data <- dateprep$master_data
 ```
 
-
 ### 3.3 Machine learning models using `autoMLmodel`
 
-Automated training, tuning and validation of machine learning models. This function includes following binary classification techniques
+Automated training, tuning and validation of machine learning models. This function includes the following binary classification techniques
 
     + Logistic regression - logreg
     + Regularised regression - glmnet
@@ -258,12 +245,12 @@ Automated training, tuning and validation of machine learning models. This funct
     + Random forest - ranger
     + Decision tree - rpart
 
-```{r , warning=FALSE,eval=T,include=T}
+```{r , warning=FALSE,eval=F,include=T}
 mymodel <- autoMLmodel( train = heart,
                         test = NULL,
                         target = 'target_var',
                         testSplit = 0.2,
-                        tuneIters = 10,
+                        tuneIters = 100,
                         tuneType = "random",
                         models = "all",
                         varImp = 10,
@@ -274,6 +261,9 @@ mymodel <- autoMLmodel( train = heart,
                         seed = 1991)
 ```
 
+```{r , warning=FALSE,eval=T,include=F}
+mymodel <- heart.model
+```
 ### 3.3 Model output
 
 Model performance
@@ -284,15 +274,15 @@ kable(performance, "html")
 
 ```
 
-Randomforest model ROC curve and variable importance
+Randomforest model Receiver Operating Characteristic (ROC) and the variable Importance
 
-Training data set ROC
+Training dataset ROC
 ```{r o1,warning=FALSE,render=mymodel,eval=T,include=T,fig.align='center',fig.height=4,fig.width=7}
 TrainROC <- mymodel$trainedModels$randomForest$modelPlots$TrainROC
 TrainROC
 ```
 
-Test data set ROC
+Test dataset ROC
 ```{r o10,warning=FALSE,render=mymodel,eval=T,include=T,fig.align='center',fig.height=4,fig.width=7}
 TestROC <- mymodel$trainedModels$randomForest$modelPlots$TestROC
 TestROC

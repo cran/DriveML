@@ -1,6 +1,6 @@
 #' Missing pattern analysis for missing data
 #'
-#' this function for summarise the missing variable, missing pattern identification, classifying the columns based on pattern of missing values.
+#' This function is used to summarise the missing variable, missing pattern identification and classifying the columns based on the pattern of missing values.
 #'
 #' @param data [data.frame | Required] data set with missing values
 #' @param mfeature [character | Required] only missing variable name
@@ -49,7 +49,6 @@ misspattern <- function(data, mfeature, drop = 0.99, print = FALSE){
         final_varlist <- unique(c(final_varlist, mfeature1))
       } else {
         if (length(mfeature) > 5) {
-          set.seed(121)
           mfeature <- mfeature[sample(1:length(mfeature), 5)]
         }
         keep_fet <- c()

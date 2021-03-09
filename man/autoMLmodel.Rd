@@ -4,86 +4,101 @@
 \alias{autoMLmodel}
 \title{Automated machine learning training of models}
 \usage{
-autoMLmodel(train, test = NULL, score = NULL, target = NULL,
-  testSplit = 0.2, tuneIters = 200, tuneType = "random",
-  models = "all", perMetric = "auc", varImp = 20, liftGroup = 50,
-  maxObs = 10000, uid = NULL, pdp = FALSE, positive = 1,
-  htmlreport = FALSE, seed = 1991, verbose = FALSE)
+autoMLmodel(
+  train,
+  test = NULL,
+  score = NULL,
+  target = NULL,
+  testSplit = 0.2,
+  tuneIters = 10,
+  tuneType = "random",
+  models = "all",
+  perMetric = "auc",
+  varImp = 10,
+  liftGroup = 50,
+  maxObs = 10000,
+  uid = NULL,
+  pdp = FALSE,
+  positive = 1,
+  htmlreport = FALSE,
+  seed = 1991,
+  verbose = FALSE
+)
 }
 \arguments{
-\item{train}{[data.frame | Required] Training set}
+\item{train}{[data.frame | Required] training set}
 
-\item{test}{[data.frame | Optional] Optional testing set to validate models on. If none is provided, one will be created internally. Default of NULL}
+\item{test}{[data.frame | Optional] optional testing set to validate models on. If none is provided, one will be created internally. Default of NULL}
 
-\item{score}{[data.frame | Optional] Optional score the models on best trained model based on AUC. If none is provided, scorelist will be null. Default of NULL}
+\item{score}{[data.frame | Optional] optional score the models on best trained model based on AUC. If none is provided, scorelist will be null. Default of NULL}
 
-\item{target}{[integer | Required] If a target is provided classification or regression models will be trained, if left as NULL unsupervised models will be trained. Default of NULL}
+\item{target}{[integer | Required] if a target is provided classification or regression models will be trained, if left as NULL unsupervised models will be trained. Default of NULL}
 
-\item{testSplit}{[numeric | Optional] Percentage of data to allocate to the test set. Stratified sampling is done. Default of 0.1}
+\item{testSplit}{[numeric | Optional] percentage of data to allocate to the test set. Stratified sampling is done. Default of 0.1}
 
-\item{tuneIters}{[integer | Optional] Number of tuning iterations to search for optimal hyper parameters. Default of 10}
+\item{tuneIters}{[integer | Optional] number of tuning iterations to search for optimal hyper parameters. Default of 10}
 
-\item{tuneType}{[character | Optional] Tune method applied, list of options are:
+\item{tuneType}{[character | Optional] tune method applied, list of options are:
 \itemize{
 \item "random" - random search hyperparameter tuning
-\item "frace - frace uses iterated f-racing algorithm for the best solution from irace package
+\item "frace" - frace uses iterated f-racing algorithm for the best solution from irace package
 }}
 
-\item{models}{[character | Optional] Which models to train. Default is all. List of strings denoting which algorithms to use for the process:
+\item{models}{[character | Optional] which models to train. Default option is all. Please find below the names for each of the methods
 \itemize{
-\item {randomForest}{Random forests using the randomForest package}
-\item {ranger}{Random forests using the ranger package}
-\item {xgboost}{Gradient boosting using xgboost}
-\item {rpart}{decision tree classification using rpart}
-\item {glmnet}{regularised regression  from glmnet}
-\item {logreg}{logistic regression from stats}
+\item {randomForest}{ - random forests using the randomForest package}
+\item {ranger}{ - random forests using the ranger package}
+\item {xgboost}{ - gradient boosting using xgboost}
+\item {rpart}{ - decision tree classification using rpart}
+\item {glmnet}{ - regularised regression  from glmnet}
+\item {logreg}{ - logistic regression from stats}
 }}
 
-\item{perMetric}{[character | Optional] Model validation metric. Default "auc"
+\item{perMetric}{[character | Optional] model validation metric. Default is "auc"
 \itemize{
-\item {auc} - Area under the curve; mlr::auc
-\item {accuracy} - Accuracy; mlr::acc
-\item {balancedAccuracy} - Balanced accuracy; mlr::bac
-\item {brier} - Brier score; mlr::brier
+\item {auc} - area under the curve; mlr::auc
+\item {accuracy} - accuracy; mlr::acc
+\item {balancedAccuracy} - balanced accuracy; mlr::bac
+\item {brier} - brier score; mlr::brier
 \item {f1} - F1 measure; mlr::f1
-\item {meanPrecRecall} - Geometric mean of precision and recall; mlr::gpr
-\item {logloss} - Logarithmic loss; mlr:logloss
+\item {meanPrecRecall} - geometric mean of precision and recall; mlr::gpr
+\item {logloss} - logarithmic loss; mlr:logloss
 }}
 
-\item{varImp}{[integer | Optional] Number of important features to plot}
+\item{varImp}{[integer | Optional] number of important features to plot}
 
-\item{liftGroup}{[integer | Optional] Number of lift value to validate the test model performance}
+\item{liftGroup}{[integer | Optional] lift value to validate the test model performance}
 
-\item{maxObs}{[numeric | Optional] Number of observations in the experiment training set on which models are trained, tuned and resampled on. Default of 40000. If the training set has less than 40k observations all will be used}
+\item{maxObs}{[numeric | Optional] number of observations in the experiment training dataset on which models are trained, tuned and resampled. Default of 40,000. If the training dataset has less than 40k observations then all the observations will be used}
 
-\item{uid}{[character | Optional] unique variable to keep in test output data}
+\item{uid}{[character | Optional] unique variables to keep in test output data}
 
-\item{pdp}{[logical | Optional] Partial dependence plot for top important variables}
+\item{pdp}{[logical | Optional] partial dependence plot for important variables}
 
 \item{positive}{[character | Optional] positive class for the target variable}
 
 \item{htmlreport}{[logical | Optional] to view the model outcome in html format}
 
-\item{seed}{[integer | Optional] Random number seed for reproducible results}
+\item{seed}{[integer | Optional] random number seed for reproducible results}
 
-\item{verbose}{[logical | Optional] display executions steps on console. Default FALSE}
+\item{verbose}{[logical | Optional] display executions steps on console. Default is FALSE}
 }
 \value{
 List output contains trained models and results
 }
 \description{
-Automated training, tuning and validation of machine learning models. Models are  tuned and resampling validated on an experiment set and trained on the full set and validated and testing on external sets. Classification models tune the probability threshold automatically and returns the results. Each model contains information of performance, the trained model as well as some plots.
+Automated training, tuning and validation of machine learning models. Models are tuned, resampled and validated on an experimental dataset and trained on the full dataset and validated/tested on external datasets. Classification models tune the probability threshold automatically and returns the results. Each model contains information on performance, model object and evaluation plots.
 }
 \details{
 all the models trained using mlr train function, all of the functionality in mlr package can be applied to the autoMLmodel outcome
 
-autoMLmodel provides below information of the machine learning classification models
+autoMLmodel provides below the information of the various machine learning classification models
 \itemize{
-\item{trainedModels}{ - Model level list output contains trained model object, hyper parameters, tuned data, test data, performance and Model plots}
-\item{results}{ - Summary of all trained model result like AUC, Precision, Recall, F1 score}
-\item{modelexp}{ - Model gain chart}
-\item{predicted_score}{ - Predicted score}
-\item{datasummary}{ - Summary of the input data}
+\item{trainedModels}{ - model level list output contains trained model object, hyper parameters, tuned data, test data, performance and Model plots}
+\item{results}{ - summary of all trained model result like AUC, Precision, Recall, F1 score}
+\item{modelexp}{ - model gain chart}
+\item{predicted_score}{ - predicted score}
+\item{datasummary}{ - summary of the input data}
 }
 }
 \examples{

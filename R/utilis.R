@@ -123,6 +123,7 @@ generateMetrics <- function(task){
 generateHyperParams <- function(learners = NULL, task){
   hypers <- list()
     hypers$xgboost <- makeParamSet(makeIntegerParam(id = "max_depth", lower = 2, upper = 12),
+                                   makeDiscreteParam(id = "eval_metric", values = "logloss"),
                                    makeNumericLearnerParam(id = "min_child_weight", default = 1, lower = 1, upper = 15),
                                  makeNumericParam(id = "eta", lower = 0.01, upper = 0.5),
                                  makeNumericLearnerParam(id = "subsample", default = 1, lower = 0.5, upper = 1),
@@ -131,13 +132,12 @@ generateHyperParams <- function(learners = NULL, task){
                                  makeIntegerParam(id = "nrounds", lower = 50, upper = 500),
                                  makeDiscreteParam(id = "early_stopping_rounds", values = 10))
 
-  hypers$randomforest <- makeParamSet(makeIntegerParam(id = "mtry", lower = 3, upper = 10),
+  hypers$randomforest <- makeParamSet(makeIntegerParam(id = "mtry", lower = 2, upper = 10),
                                       makeIntegerParam(id = "ntree", lower = 50, upper = 600),
                                       makeLogicalLearnerParam(id = "importance", default = TRUE),
                                       makeIntegerParam(id = "nodesize", lower = 1, upper = 20))
 
-  hypers$ranger <- makeParamSet(makeIntegerParam(id = "mtry", lower = 2, upper = 10),
-                                makeDiscreteLearnerParam(id = "importance", values = c("impurity", "permutation"), default = "permutation", tunable = FALSE),
+  hypers$ranger <- makeParamSet(makeDiscreteLearnerParam(id = "importance", values = c("impurity", "permutation"), default = "permutation", tunable = FALSE),
                                 makeIntegerParam(id = "min.node.size", lower = 5, upper = 10),
                                 makeIntegerParam(id = "num.trees", lower = 50, upper = 600))
 
@@ -282,13 +282,14 @@ pdplot <- function(train, trainedModels, feat, results, seed, y, sample){
   return(list(plots = plots))
 }
 
+
 ### Beta coef for Logreg, glmnet and raprt
 betaml <- function(modelobjet, mname){
   model <- modelobjet
   if (mname == "glmnet"){
     md_coef <- predict(model$learner.model, type = "coef", s = min(model$learner.model$lambda))
     md_coef <- as.matrix(md_coef)
-    md_coef <- as.data.frame(md_coef); names(md_coef) <- "coefficients"
+    md_coef <- data.frame(md_coef); names(md_coef) <- "coefficients"
     md_coef$Variable <- rownames(md_coef)
     md_coef <- md_coef[, c("Variable", "coefficients")]
   } else
@@ -317,3 +318,5 @@ betaml <- function(modelobjet, mname){
       }
 return(md_coef)
 }
+
+

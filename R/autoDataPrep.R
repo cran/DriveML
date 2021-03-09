@@ -1,62 +1,62 @@
-#' Automatic data preparation for ML algorithm
+#' Automatic data preparation for ML algorithms
 #'
-#' Final data preparation before ML algorithm. Function provides final data set and highlights of the data preparation
+#' Final data preparation before ML algorithms. Function provides final data set and highlights of the data preparation
 #'
 #' @param data [data.frame | Required] dataframe or data.table
 #' @param target [integer | Required] dependent variable (binary or multiclass)
-#' @param missimpute [text | Optional] missing value impuation using mlr misimpute function. See more methods in details
-#' @param auto_mar [character | Optional] identify any missing variable which are completely missing at random or not.(default FALSE). If TRUE this will call autoMAR()
+#' @param missimpute [text | Optional] missing value impuation using mlr misimpute function. Please refer to the "details" section to know more
+#' @param auto_mar [character | Optional] identify any missing variable which are completely missing at random or not (default FALSE). If TRUE this will call autoMAR()
 #' @param mar_object [character | Optional] object created from autoMAR function
 #' @param dummyvar [logical | Optional] categorical feature engineering i.e. one hot encoding (default is TRUE)
-#' @param char_var_limit [integer | Optional] default limit is 12 for a dummy variable preparation. Ex: if gender variable has two different value "M" and "F", then gender has 2 level
+#' @param char_var_limit [integer | Optional] default limit is 12 for a dummy variable preparation. e.g. if gender variable has two different value "M" and "F", then gender has 2 levels
 #' @param aucv [integer | Optional] cut off value for AUC based variable selection
 #' @param corr [integer | Optional] cut off value for correlation based variable selection
-#' @param outlier_flag [logical | Optional] to add outlier features (default is False)
+#' @param outlier_flag [logical | Optional] to add outlier features (default is FALSE)
 #' @param interaction_var [logical | Optional] bulk interactions transformer for numerical features
-#' @param frequent_var [logical | Optional] Frequent transformer for categorical features
+#' @param frequent_var [logical | Optional] frequent transformer for categorical features
 #' @param uid [character | Optional] unique identifier column if any to keep in the final data set
 #' @param onlykeep [character | Optional] only consider selected variables for data preparation
-#' @param drop [character | Optional] exclude variable list from the data preparation
-#' @param verbose [logical | Optional] display executions steps on console. Default FALSE
+#' @param drop [character | Optional] exclude variables from the dataset
+#' @param verbose [logical | Optional] display executions steps on console(default is FALSE)
 #' @details
 #'
 #' Missing imputation using impute function from MLR
 #'
-#' MLR package have a appropriate way to impute missing value using multiple methods.  default value is listed below
+#' MLR package have a appropriate way to impute missing value using multiple methods.
 #' #' \itemize{
 #'   \item mean value for integer variable
 #'   \item median value for numeric variable
 #'   \item mode value for character or factor variable
 #' }
-#'Optional: You might be interested to impute missing variable using ML method. List of algortihms will be handle missing variables in MLR package
+#'optional: You might be interested to impute missing variable using ML method. List of algorithms will be handle missing variables in MLR package
 #' listLearners("classif", check.packages = TRUE, properties = "missings")[c("class", "package")]
 #'
 #' Feature engineering
 #' \itemize{
-#'   \item Missing not completely at random variable using autoMAR function
-#'   \item Date transfomer like year, month, quarter, week
-#'   \item Frequent transformer counts each categorical value in the dataset
-#'   \item Interaction transformer using multiplication
+#'   \item missing not completely at random variable using autoMAR function
+#'   \item date transfomer like year, month, quarter, week
+#'   \item frequent transformer counts each categorical value in the dataset
+#'   \item interaction transformer using multiplication
 #'   \item one hot dummy coding for categorical value
 #'   \item outlier flag and capping variable for numerical value
 #' }
 #'
 #' Feature reduction
 #' \itemize{
-#'   \item Zero variance using nearZeroVar caret function
-#'   \item Pearson's Correlation value
-#'   \item AUC with target variable
+#'   \item zero variance using nearZeroVar caret function
+#'   \item pearson's correlation value
+#'   \item auc with target variable
 #' }
 #' @return list output contains below objects
 #'
 #' \describe{
-#'   \item{\code{complete_data}}{Complete data set including new novel features based on the functional understanding of the dataset}
-#'   \item{\code{master_data}}{filtered data set based on the input parameter}
-#'   \item{\code{final_var_list}}{list of master varaibles}
+#'   \item{\code{complete_data}}{complete dataset including new derived features based on the functional understanding of the dataset}
+#'   \item{\code{master_data}}{filtered dataset based on the input parameters}
+#'   \item{\code{final_var_list}}{list of master variables}
 #'   \item{\code{auc_var}}{list of auc variables}
 #'   \item{\code{cor_var}}{list of correlation variables}
 #'   \item{\code{overall_var}}{all variables in the dataset}
-#'   \item{\code{zerovariance}}{zero variance variables in the dataset}
+#'   \item{\code{zerovariance}}{variables with zero variance in the dataset}
 #'}
 #' @examples
 #' #Auto data prep
@@ -64,16 +64,13 @@
 #' dummyvar = TRUE, aucv = 0.02, corr = 0.98, outlier_flag = TRUE,
 #' interaction_var = TRUE, frequent_var = TRUE)
 #' train <- traindata$master
-#'
-#' # Print auto data prep object
-#' printautoDataprep(traindata)
-#'
 #' @import data.table stats
 #' @importFrom sampling strata
+#' @importFrom SmartEDA ExpData
 #' @importFrom mlr impute imputeMode imputeMean imputeMedian imputeConstant imputeLearner makeLearner configureMlr removeConstantFeatures
 #' @seealso
 #' \code{\link[mlr:impute]{impute}}
-#' @export autoDataprep
+#' @export
 
 autoDataprep <- function(data, target = NULL, missimpute = "default",
 auto_mar = FALSE, mar_object = NULL, dummyvar = TRUE, char_var_limit = 12,
@@ -263,20 +260,16 @@ frequent_var = FALSE, uid = NULL, onlykeep = NULL, drop = NULL, verbose = FALSE)
   cl[[1]] <- as.name("autoDataprep")
   fit <- list(call = cl,
               datasummary = list(type1 = datstrain, type2 = datstrain1),
-              final_var_list = master_variable,
-              overall_variable = all_variable,
               complete_data = mydata,
               master_data = mydata[unique(c(unique_var, target, master_variable))],
-              auc_var = varSel_auc,
-              cor_var = corNms,
-              zerovariance = zeroNms,
-              outlier_summary = out_flag_var,
               raw_list = list("Num_Correlation" = myDF, "AUC_value" = varSel_auc1),
               var_list = list("All_columns" = all_names, "Numeric_col" = num_var, "Character_col" = char_var,  "Factor_col" = factor_var,
                               "Logical_col" = logical_var, "Date_col" = date_var, "Unique_col" = unique_var, "MAR_col" = mar_variable,
                               "Dummy_col" = dumvarnam, "Dropped_col" = drop_var, "Low_auc_col" = low_auc_var,
-                              "first_set_var" = varbucket))
-  class(fit) <- "autoDataprep"
+                              "first_set_var" = varbucket, "final_var_list" = master_variable, "cor_var" = corNms,
+                              "auc_var" = varSel_auc, "overall_variable" = all_variable, "zerovariance" = zeroNms,
+                              "outlier_summary" = out_flag_var))
+  attr(fit, "class") <- "autoDataprep"
   invisible(gc(verbose = FALSE))
   return(fit)
 }

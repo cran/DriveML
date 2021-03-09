@@ -1,15 +1,15 @@
 #' Function to identify and generate the Missing at Random features (MAR)
 #'
-#' this function will automatically identify the missing pattern and flag the variable if they are not missing at random based on AUC method
+#' This function will automatically identify the missing patterns and flag the variables if they are not missing at random based on the AUC method
 #'
-#' @param data dataframe or data.table
-#' @param aucv AUC cut-off value for the not missing at random variable selection
-#' @param strataname vector of stratification variables
-#' @param stratasize vector of stratum sample sizes (in the order in which the strata are given in the input data set).
-#' @param mar_method missing at random classification method ("glm", "rf"). Default GLM is used (GLM is run faster for high dimension data)
-#' @return List output including missing variable summary and number of MAR flag variables
+#' @param data [data.frame | Required] dataframe or data.table
+#' @param aucv [integer  | Optional] auc cut-off value for the not missing at random variable selection
+#' @param strataname [text  | Optional] vector of stratification variables
+#' @param stratasize [integer  | Optional] vector of stratum sample sizes (in the order in which the strata are given in the input dataset).
+#' @param mar_method [text  | Optional] missing at random classification method ("glm", "rf"). Default GLM is used (GLM runs faster for high dimensional data)
+#' @return list output including missing variable summary and number of MAR flag variables
 #' @examples
-#' # Create missing at random features
+#' # create missing at random features
 #' marobj <- autoMAR (heart, aucv = 0.9, strataname = NULL, stratasize = NULL, mar_method = "glm")
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @export autoMAR

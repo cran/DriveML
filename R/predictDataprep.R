@@ -32,7 +32,7 @@ predictDataprep <- function(x, data){
 
   target <- x$call$target
   imp <- x$call$missimpute
-  final_var_list <- x$final_var_list
+  final_var_list <- x$var_list$final_var_list
   unique_var <- x$var_list$Unique_col
   dumvarnam <- x$var_list$Dummy_col
 

@@ -4,7 +4,9 @@
 \name{heart.model}
 \alias{heart.model}
 \title{Heart Classification Drive ML Model.}
-\format{An object of class \code{autoMLmodel} of length 6.}
+\format{
+An object of class \code{autoMLmodel} of length 6.
+}
 \usage{
 heart.model
 }
@@ -17,8 +19,5 @@ Contains the task (`heart.model`).
 \examples{
 ## Sample model object
 modelobj <- heart.model
-}
-\references{
-See \url{https://www.kaggle.com/cdabakoglu/heart-disease-classifications-machine-learning}
 }
 \keyword{mlmodel}
