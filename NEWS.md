@@ -1,3 +1,8 @@
+# DriveML 0.1.3
+
+## Bug fixes
+* matrix issues has fixed
+
 # DriveML 0.1.2
 
 ## Enhancements

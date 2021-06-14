@@ -14,7 +14,6 @@
 #' @seealso
 #' \code{\link[iml:FeatureEffects]{FeatureEffects}}
 #' \code{\link[mlr:plotPartialDependence]{plotPartialDependence}}
-#' \code{\link[pdp:partial]{partial}}
 #' @examples
 #'
 #' \donttest{

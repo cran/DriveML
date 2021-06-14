@@ -68,7 +68,6 @@
 #' @importFrom SmartEDA ExpCatViz
 #' @seealso
 #' \code{\link[mlr:train]{mlr train}}
-#' \code{\link[caret:train]{caret train}}
 #' \code{\link[mlr:makeLearner]{makeLearner}}
 #' \code{\link[mlr:tuneParams]{tuneParams}}
 #' @export autoMLmodel
