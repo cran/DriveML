@@ -28,7 +28,7 @@ autoDataprep(
 
 \item{target}{[integer | Required] dependent variable (binary or multiclass)}
 
-\item{missimpute}{[text | Optional] missing value impuation using mlr misimpute function. Please refer to the "details" section to know more}
+\item{missimpute}{[text | Optional] missing value imputation using mlr misimpute function. Please refer to the "details" section to know more}
 
 \item{auto_mar}{[character | Optional] identify any missing variable which are completely missing at random or not (default FALSE). If TRUE this will call autoMAR()}
 
@@ -106,7 +106,7 @@ Feature reduction
 traindata <- autoDataprep(heart, target = "target_var", missimpute = "default",
 dummyvar = TRUE, aucv = 0.02, corr = 0.98, outlier_flag = TRUE,
 interaction_var = TRUE, frequent_var = TRUE)
-train <- traindata$master
+train <- traindata$master_data
 }
 \seealso{
 \code{\link[mlr:impute]{impute}}

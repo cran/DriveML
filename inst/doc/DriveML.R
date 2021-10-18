@@ -2,6 +2,7 @@
 library(rmarkdown)
 library(SmartEDA)
 library(DriveML)
+library(mlr)
 library(knitr)
 library(ggplot2)
 library(tidyr)
@@ -82,7 +83,46 @@ dateprep <- autoDataprep(data = heart,
                              onlykeep = NULL,
                              drop = NULL)
 
-print(dateprep)
+train_data <- dateprep$master_data
+
+## ---- warning=FALSE,eval=T,include=T------------------------------------------
+myimpute <- list(classes=list(factor = imputeMode(),
+                              integer = imputeMean(),
+                              numeric = imputeMedian(),
+                              character = imputeMode()))
+dateprep <- autoDataprep(data = heart, 
+                         target = 'target_var',
+                         missimpute = myimpute,
+                         auto_mar = FALSE,
+                             mar_object = NULL,
+                             dummyvar = TRUE,
+                             char_var_limit = 15,
+                             aucv = 0.002,
+                             corr = 0.98,
+                             outlier_flag = TRUE,
+                             uid = NULL,
+                             onlykeep = NULL,
+                             drop = NULL)
+
+train_data <- dateprep$master_data
+
+## ---- warning=FALSE,eval=T,include=T------------------------------------------
+marobj <- autoMAR (heart, aucv = 0.9, strataname = NULL, stratasize = NULL, mar_method = "glm")
+
+dateprep <- autoDataprep(data = heart, 
+                         target = 'target_var',
+                         missimpute = myimpute,
+                         auto_mar = TRUE,
+                             mar_object = marobj,
+                             dummyvar = TRUE,
+                             char_var_limit = 15,
+                             aucv = 0.002,
+                             corr = 0.98,
+                             outlier_flag = TRUE,
+                             uid = NULL,
+                             onlykeep = NULL,
+                             drop = NULL)
+
 train_data <- dateprep$master_data
 
 ## ---- warning=FALSE,eval=F,include=T------------------------------------------

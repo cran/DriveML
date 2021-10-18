@@ -1,7 +1,7 @@
 Package: DriveML
 Type: Package
 Title: Self-Drive Machine Learning Projects
-Version: 0.1.3
+Version: 0.1.4
 Authors@R: c(person("Dayanand Ubrangala", role = c("aut", "cre"), email = "daya6489@gmail.com"),
              person("Sayan", "Putatunda", role = c("aut","ctb")),
              person("Kiran", "R", role = c("aut","ctb")),
@@ -22,9 +22,9 @@ Repository: CRAN
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2021-06-12 17:25:55 UTC; dubrangala
+Packaged: 2021-10-18 10:47:50 UTC; dubrangala
 Author: Dayanand Ubrangala [aut, cre],
   Sayan Putatunda [aut, ctb],
   Kiran R [aut, ctb],
   Ravi Prasad Kondapalli [aut, ctb]
-Date/Publication: 2021-06-14 08:20:05 UTC
+Date/Publication: 2021-10-18 11:10:01 UTC

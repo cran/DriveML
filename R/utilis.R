@@ -81,6 +81,15 @@ addNAfactor <- function(x){
   return(x)
 }
 
+## clean data
+clean_data <- function(mydata){
+  if (missing(mydata)) stop("Input data is missing")
+  setDT(mydata)
+  df <- lapply(mydata, function(x) ifelse(grepl("^$|^ $", x)==TRUE, NA, x))
+  df <- setDT(df)
+  return(df)
+}
+
 ## AutoModel
 generateTask <- function(x, y = NULL, positive = 1, maxLevels = 100){
     if (is.null(y)) stop("target variable is missing")

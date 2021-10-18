@@ -31,7 +31,7 @@ predictDataprep <- function(x, data){
   interaction_var <- x$var_list$first_set_var$H
 
   target <- x$call$target
-  imp <- x$call$missimpute
+  imp <- paste0(x$call$missimpute)
   final_var_list <- x$var_list$final_var_list
   unique_var <- x$var_list$Unique_col
   dumvarnam <- x$var_list$Dummy_col
@@ -60,7 +60,10 @@ predictDataprep <- function(x, data){
                                      numeric = imputeMedian(),
                                      character = imputeMode()))
   } else {
-    impdata <- impute(XX, classes = imp)
+    imp <- get(imp)
+    lenimp <- length(imp)
+    if (lenimp == 1) impdata <- impute(XX, classes = imp$classes)
+    if (lenimp == 2) impdata <- impute(XX, target = target, classes = imp$classes)
   }
   XX <- impdata$data
 

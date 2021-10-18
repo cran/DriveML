@@ -58,5 +58,4 @@ cc = autoPDP(Boston, rf,target = "medv", feature = "nox", sample = 1, seed = 121
 \seealso{
 \code{\link[iml:FeatureEffects]{FeatureEffects}}
 \code{\link[mlr:plotPartialDependence]{plotPartialDependence}}
-\code{\link[pdp:partial]{partial}}
 }
