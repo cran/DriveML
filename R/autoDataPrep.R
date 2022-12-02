@@ -92,7 +92,7 @@ frequent_var = FALSE, uid = NULL, onlykeep = NULL, drop = NULL, verbose = FALSE)
   }
   if (auto_mar == TRUE) {
     if (!is.null(mar_object)){
-      if (class(mar_object) != "autoMAR") stop ("mar object should be autoMAR output")
+      if (inherits(mar_object, "autoMAR") == FALSE) stop ("mar object should be autoMAR output")
       mar_variable <- mar_object$auc_features$Variable
     } else {
           xx <- subset(data, select = setdiff(names(data), c(uid, drop)))

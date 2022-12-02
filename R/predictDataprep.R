@@ -21,7 +21,7 @@
 #' @export predictDataprep
 
 predictDataprep <- function(x, data){
-  if (class(x) != "autoDataprep") stop("Model object is not autoDataprep output")
+  if (inherits(x, "autoDataprep") == FALSE) stop("Model object is not autoDataprep output")
   setDF(data)
   num_flag <- x$var_list$first_set_var$C
   num_var <- x$var_list$first_set_var$D
@@ -31,7 +31,7 @@ predictDataprep <- function(x, data){
   interaction_var <- x$var_list$first_set_var$H
 
   target <- x$call$target
-  imp <- paste0(x$call$missimpute)
+  imp <- x$call$missimpute
   final_var_list <- x$var_list$final_var_list
   unique_var <- x$var_list$Unique_col
   dumvarnam <- x$var_list$Dummy_col
@@ -60,10 +60,7 @@ predictDataprep <- function(x, data){
                                      numeric = imputeMedian(),
                                      character = imputeMode()))
   } else {
-    imp <- get(imp)
-    lenimp <- length(imp)
-    if (lenimp == 1) impdata <- impute(XX, classes = imp$classes)
-    if (lenimp == 2) impdata <- impute(XX, target = target, classes = imp$classes)
+    impdata <- impute(XX, classes = imp)
   }
   XX <- impdata$data
 

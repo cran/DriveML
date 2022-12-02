@@ -19,7 +19,7 @@
 #' @export predictAutoMAR
 
 predictAutoMAR <- function(x, data, mar_var = NULL){
-  if (class(x) != "autoMAR") stop("Model object is not MAR output")
+  if (inherits(x, "autoMAR") == FALSE) stop("Model object is not MAR output")
   if (!is.null(mar_var)) {
     mfetaure_n <- mar_var
   } else {

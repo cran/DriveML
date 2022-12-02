@@ -22,7 +22,7 @@
 
 autoMLReport <- function (mlobject, mldata = NULL, op_file = NULL, op_dir = NULL){
   if (missing(mlobject)) stop("DriveML model object is missing")
-  if (class(mlobject) != "autoMLmodel") {
+  if (inherits(mlobject, "autoMLmodel") == FALSE) {
     stop("mlobject should be autoMLmodel output")
   }
   if(is.null(op_dir)) {
@@ -50,3 +50,4 @@ autoMLReport <- function (mlobject, mldata = NULL, op_file = NULL, op_dir = NULL
   if (ifelse(is.null(args[["quiet"]]), TRUE, !args[["quiet"]]))
     message(paste0("\n\nReport is generated at \"", report_path, "\"."))
 }
+
